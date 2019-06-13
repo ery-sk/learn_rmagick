@@ -4,7 +4,9 @@ class ImagesController < ApplicationController
   def new; end
 
   def create
-    images = Magick::ImageList.new(params[:image_1].tempfile.path, params[:image_2].tempfile.path)
-    images.append(false).write('public/join.png')
+    base_image = Magick::Image.from_blob(params[:image_1].read).first
+    addition_image = Magick::Image.from_blob(params[:image_2].read).first
+    image = base_image.composite(addition_image, 0, 0, Magick::OverCompositeOp)
+    image.write('public/pile_up.png')
   end
 end
