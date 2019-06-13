@@ -36,3 +36,59 @@ $ bundle
 ## 動作確認
 
 lib/test.rb 参照
+
+## formで複数の画像を送信して保存する
+
+```sh
+rails g controller images
+```
+
+```rb
+# routes.rb
+Rails.application.routes.draw do
+  resources :images, only: %i[new create]
+end
+```
+
+```rb
+# images_controller.rb
+class ImagesController < ApplicationController
+  def new; end
+
+  def create
+    File.binwrite('public/image_1.png', params[:image_1].read)
+    File.binwrite('public/image_2.png', params[:image_2].read)
+  end
+end
+```
+
+```erb
+/* images/new.html.erb */
+<%= form_with url: images_path do |f| %>
+  <%= f.file_field :image_1 %>
+  <%= f.file_field :image_2 %>
+  <%= f.submit %>
+<% end %>
+```
+
+<img width="606" alt="form" src="https://user-images.githubusercontent.com/38872854/59412660-e252e500-8df8-11e9-8110-9959b4536d09.png">
+
+送信すると public 以下に保存されている
+
+## 取得した画像を連結して保存する
+
+```rb
+# images_controller.rb
+class ImagesController < ApplicationController
+  def new; end
+
+  def create
+    def create
+      images = Magick::ImageList.new(params[:image_1].tempfile.path, params[:image_2].tempfile.path)
+      images.append(false).write('public/join.png')
+    end
+  end
+end
+```
+
+## 取得した画像を規定の場所に重ねて合成して保存する
