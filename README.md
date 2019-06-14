@@ -63,7 +63,7 @@ end
 ```
 
 ```erb
-/* images/new.html.erb */
+<%# images/new.html.erb %>
 <%= form_with url: images_path do |f| %>
   <%= f.file_field :image_1 %>
   <%= f.file_field :image_2 %>
